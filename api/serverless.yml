@@ -1,0 +1,24 @@
+service:
+  name: api
+
+plugins:
+  - serverless-webpack
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: dev
+  region: us-east-1
+  environment:
+    DYNAMODB_USERS: ${ssm:${self:custom.stage}-dynamodb-users-table}
+
+functions:
+  register:
+    handler: register/handler.register
+    events:
+      - http:
+          path: users
+          method: post
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
