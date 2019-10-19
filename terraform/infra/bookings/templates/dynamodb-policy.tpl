@@ -9,13 +9,22 @@
       "Resource": "${resource}"
     },
     {
-      "Effect": "Allow",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "*"
+    }
+    %{ if sns_topic != ""}
+    , {
       "Action": [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-          ],
-          "Resource": "*"
-        }
+        "sns:Publish"
+      ],
+      "Effect": "Allow",
+      "Resource": "${sns_topic}"
+    }
+    %{ endif }
   ]
-}
+} 

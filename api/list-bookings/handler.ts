@@ -1,21 +1,17 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import * as AWS from 'aws-sdk';
-import { v4 as uuid } from 'uuid';
 
 AWS.config.update({ region: process.env.AWS_REGION });
 const documentClient = new AWS.DynamoDB.DocumentClient();
 
-export const create: APIGatewayProxyHandler = async (event, _context) => {
-    const body = JSON.parse(event.body);
-    await documentClient.put({
-        TableName: process.env.DYNAMODB_BOOKINGS,
-        Item: {
-            id: uuid(),
-            date: body.date,
-            user: event.requestContext.authorizer
-        }
-    }).promise();
+export const list: APIGatewayProxyHandler = async (event, _context) => {
+    if (event.requestContext.authorizer.role === 'ADMIN') {
+        const bookings = await documentClient.scan({
+            TableName: process.env.DYNAMODB_BOOKINGS,
+        }).promise();
 
-    return { statusCode: 200, body: JSON.stringify({ message: 'Agendamento efetuado com sucesso!' }) };
+        return { statusCode: 200, body: JSON.stringify(bookings.Items) };
+    }
+    return { statusCode: 403, body: JSON.stringify({ message: 'Você não está autorizado a fazer essa chamada' }) }
 };
