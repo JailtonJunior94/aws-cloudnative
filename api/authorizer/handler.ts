@@ -14,7 +14,6 @@ export const authorizer = (event: any, _context: any, callback: any) => {
 
 const generatePolicy = function (principalId: any, effect: any, resource: any, user?: any) {
     const authResponse: any = {};
-
     authResponse.principalId = principalId;
     if (effect && resource) {
         const policyDocument: any = {};
@@ -27,7 +26,6 @@ const generatePolicy = function (principalId: any, effect: any, resource: any, u
         policyDocument.Statement[0] = statementOne;
         authResponse.policyDocument = policyDocument;
     }
-
     if (user) {
         authResponse.context = user;
     }
