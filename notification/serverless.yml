@@ -12,6 +12,7 @@ provider:
 
 functions:
   send_email:
+    memorySize: ${self:custom.memorySize.${self:custom.stage}}
     handler: email-notification/handler.sendEmail
     role: ${ssm:${self:custom.stage}-email-iam-role}
     events:
@@ -23,6 +24,7 @@ functions:
       EMAIL_FROM_PASSWORD: ${ssm:${self:custom.stage}-email-from-password}
 
   send_sms:
+    memorySize: ${self:custom.memorySize.${self:custom.stage}}
     handler: sms-notification/handler.sendSms
     role: ${ssm:${self:custom.stage}-sms-iam-role}
     events:
@@ -34,3 +36,6 @@ functions:
 
 custom:
   stage: ${opt:stage, self:provider.stage}
+  memorySize:
+    dev: 128
+    prod: 2048

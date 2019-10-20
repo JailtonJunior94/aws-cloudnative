@@ -12,6 +12,7 @@ provider:
 
 functions:
   register:
+    memorySize: ${self:custom.memorySize.${self:custom.stage}}
     role: ${ssm:${self:custom.stage}-register-iam-role}
     handler: register/handler.register
     environment:
@@ -22,6 +23,7 @@ functions:
           method: post
 
   login:
+    memorySize: ${self:custom.memorySize.${self:custom.stage}}
     role: ${ssm:${self:custom.stage}-login-iam-role}
     handler: login/handler.login
     environment:
@@ -34,6 +36,7 @@ functions:
           method: post
 
   create_booking:
+    memorySize: ${self:custom.memorySize.${self:custom.stage}}
     role: ${ssm:${self:custom.stage}-create-booking-iam-role}
     handler: create-booking/handler.create
     environment:
@@ -45,6 +48,7 @@ functions:
           authorizer: authorizer
 
   list_bookings:
+    memorySize: ${self:custom.memorySize.${self:custom.stage}}
     role: ${ssm:${self:custom.stage}-list-bookings-iam-role}
     handler: list-bookings/handler.list
     environment:
@@ -56,9 +60,13 @@ functions:
           authorizer: authorizer
 
   authorizer:
+    memorySize: ${self:custom.memorySize.${self:custom.stage}}
     handler: authorizer/handler.authorizer
     environment:
       JWT_SECRET: ${ssm:${self:custom.stage}-jwt-secret}
 
 custom:
   stage: ${opt:stage, self:provider.stage}
+  memorySize:
+    dev: 128
+    prod: 2048
